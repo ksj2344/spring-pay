@@ -37,7 +37,7 @@ public class User extends UpdatedAt {
     @Column(length = 30)
     private String nickName; //nick_name
 
-    @Column(length = 50)
+    @Column(length = 250)
     private String pic;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

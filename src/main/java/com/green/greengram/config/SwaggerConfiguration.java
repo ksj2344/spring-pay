@@ -45,6 +45,15 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi groupGreengramApi() {
+        return GroupedOpenApi.builder()
+                .group("Greengram")
+                .group("Greengram") //Select a definition에 나타날 그룹 이름
+                .pathsToMatch("/api/feed/**", "/api/user", "/api/user/pic", "/api/product/**")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi groupPayApi() {
         return GroupedOpenApi.builder()
                 .group("Pay")

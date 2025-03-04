@@ -40,6 +40,7 @@ public class OrderMaster extends UpdatedAt {
      */
     // cascade - a -> b -> c 테이블 관계에서 b 를 삭제하면 c는 고아가 되기 때문에 cascade 가 삭제처리를 자동으로 진행
     // cascade는 부모가 자식의 생명주기를 관리하고(튜플), orphanRemoval는 부모 entity가 삭제되면 자식 entity도 삭제됨
+    @Builder.Default //builder패턴 이용시 orderProductList = null이 되는데 이 애노테이션으로 방지
     @OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderProduct> orderProductList = new ArrayList<>();
 

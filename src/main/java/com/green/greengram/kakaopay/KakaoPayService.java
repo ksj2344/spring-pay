@@ -105,7 +105,7 @@ public class KakaoPayService {
                 .quantity(productList.size())
                 .totalAmount(totalAmount)
                 .taxFreeAmount(0)
-                .approvalUrl(constKakaoPay.getCompletedUrl())
+                .approvalUrl(constKakaoPay.getApprovalUrl())
                 .failUrl(constKakaoPay.getFailUrl())
                 .cancelUrl(constKakaoPay.getCancelUrl())
                 .build();
@@ -125,8 +125,8 @@ public class KakaoPayService {
     }
 
     //승인처리
-    public String getApprove(KakaoPayApproveReq req) {
-        //카카오페이 준비과정에서 세션에 저장한 고유번호(tid), partnerOrderId, partnerUserId 가져오기
+    public KakaoPayApproveRes getApprove(KakaoPayApproveReq req) {
+        //카카오페이 준비과정에서 세션에 저장한 tid, partnerOrderId, partnerUserId 가져오기
         KakaoPaySessionDto dto = (KakaoPaySessionDto) SessionUtils.getAttribute(constKakaoPay.getKakaoPayInfoSessionName());
         log.info("결제승인 요청을 인증하는 토큰: {}", req.getPgToken());
         //log.info("결제 고유번호: {}", tid);
@@ -146,7 +146,8 @@ public class KakaoPayService {
         OrderMaster orderMaster = orderMasterRepository.findById(Long.parseLong(dto.getPartnerOrderId())).orElse(null);
         if(orderMaster != null) {
             orderMaster.setOrderStatusCode(OrderStatusCode.COMPLETED);
+            orderMasterRepository.save(orderMaster);
         }
-        return constKakaoPay.getCompletedUrl();
+        return res;
     }
 }
