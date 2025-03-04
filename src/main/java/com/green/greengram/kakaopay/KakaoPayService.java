@@ -44,6 +44,9 @@ public class KakaoPayService {
         //Product 목록을 Map으로 변환하여 빠르게 검색 가능하게 만듦 Function.identity()는 객체의 멤버필드가 아닌 객체 자신을 말한다.
         Map<Long, OrderProductDto> orderProductMap = req.getProductList().stream().collect(Collectors.toMap(OrderProductDto::getProductId, Function.identity()));
 
+        // map() : 같은 크기의 다른 collection을 만드는 것
+        // filter() : 다른 크기의 같은 값을 가진 collection을 만드는 것
+        // reduce(): 같은 값의 collection을 하나로 만들 때
 
         //총 결제금액
         // 첫번째 인자: 0은 초기값,
@@ -69,16 +72,21 @@ public class KakaoPayService {
                 .userId(authenticationFacade.getSignedUserId())
                 .build();
 
+        //(A) OrderMaster 엔터티 객체화 (영속성 없음)
         OrderMaster orderMaster = OrderMaster.builder()
                 .user(signedUser)
                 .totalAmount(totalAmount)
                 .orderStatusCode(OrderStatusCode.READY)
                 .build();
 
-        for(Product item : productList) {
+        // 영속성이 없는 값을 insert하면
+        for(Product item : productList) { //DB에서 가져온 productList를 향상된 for문 처리
+            //OrderProduct: 엔터티는 복합키로 구성,  (B) OrderProductIds 객체화
             OrderProductIds ids = OrderProductIds.builder()
-                    .orderId(item.getProductId())
+                    .orderId(item.getProductId()) //orderId를 값을 넣을 수 없다. 왜냐면 아직 orderId값을 모름
                     .build();
+
+            //(C) Order Product 엔터티 객체화(영속성이 없음)
             OrderProduct orderProduct = OrderProduct.builder()
                     .ids(ids)
                     .product(item)
@@ -86,10 +94,12 @@ public class KakaoPayService {
                     .unitPrice(item.getProductPrice())
                     .build();
 
-            orderMaster.addOrderProduct(orderProduct);
+            orderMaster.addOrderProduct(orderProduct); //양방향 연결 (A)와 (C) 연결.
+            // (A)도 (C)를 알아야 하고 (C)도 (A)를 알아야한다.
         }
 
         orderMasterRepository.save(orderMaster);
+
 
         //결제 준비단계 : 상품1 외 n개 표시
         String itemName = productList.get(0).getProductName();
@@ -105,7 +115,7 @@ public class KakaoPayService {
                 .quantity(productList.size())
                 .totalAmount(totalAmount)
                 .taxFreeAmount(0)
-                .approvalUrl(constKakaoPay.getApprovalUrl())
+                .approvalUrl(constKakaoPay.getApprovalUrl()) //QR처리를 하면 리다이렉트 주소값
                 .failUrl(constKakaoPay.getFailUrl())
                 .cancelUrl(constKakaoPay.getCancelUrl())
                 .build();
