@@ -52,15 +52,15 @@ public class MyOauth2UserService extends DefaultOAuth2UserService {
 
         //기존에 회원가입이 되어있는지 체크
         User user = userRepository.findByUidAndProviderType(oauth2UserInfo.getId(), signInProviderType);
-        if(user == null) { // 최초 로그인 상황 > 회원가입 처리
-            user = new User();
-            user.setUid(oauth2UserInfo.getId());
-            user.setProviderType(signInProviderType);
-            user.setUpw("");
-            user.setNickName(oauth2UserInfo.getName());
-            user.setPic(oauth2UserInfo.getProfileImageUrl());
-            userRepository.save(user);
-        }
+//        if(user == null) { // 최초 로그인 상황 > 회원가입 처리
+//            user = new User();
+//            user.setUid(oauth2UserInfo.getId());
+//            user.setProviderType(signInProviderType);
+//            user.setUpw("");
+//            user.setNickName(oauth2UserInfo.getName());
+//            user.setPic(oauth2UserInfo.getProfileImageUrl());
+//            userRepository.save(user);
+//        }
 
         OAuth2JwtUser oauth2jwtUser = new OAuth2JwtUser(user.getNickName()
                                                       , user.getPic()

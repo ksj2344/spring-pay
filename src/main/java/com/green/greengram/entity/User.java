@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity //테이블을 만들고 DML때 사용
 @Getter
-@Setter
+@EqualsAndHashCode
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
@@ -18,6 +18,7 @@ import java.util.List;
         }
 )
 @Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends UpdatedAt {
@@ -25,10 +26,10 @@ public class User extends UpdatedAt {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment
     private Long userId; // user_id
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2)
     private SignInProviderType providerType;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 50)
     private String uid;
 
     @Column(nullable = false, length = 100)
